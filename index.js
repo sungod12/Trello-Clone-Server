@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 const { router: UserRouter } = require("./routes/Users");
 const KanbanRouter = require("./routes/KanbanBoard");
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 const PORT = 3001;
 const mongoose = require("mongoose");
