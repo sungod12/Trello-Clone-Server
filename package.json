@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start":"node index.js",
-    "start:dev":"nodemon index.js"
+    "start": "node index.js",
+    "start:dev": "nodemon index.js"
   },
   "author": "sungod12",
   "license": "ISC",
@@ -19,7 +19,7 @@
     "node-cron": "^3.0.0"
   },
   "devDependencies": {
-    "mongoose": "^5.13.4",
+    "mongoose": "^5.13.14",
     "nodemon": "^2.0.16"
   },
   "engines": {
