@@ -1,9 +1,11 @@
-const JWT_SECRET = process.env.JWT_SECRET;
 const BlackList = require("./models/blacklist");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const User = require("./models/user");
 const cron = require("node-cron");
+const dotenv = require("dotenv");
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 class TokenGenerator {
   generateAccessToken = (user) => {
