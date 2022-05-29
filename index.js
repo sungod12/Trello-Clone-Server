@@ -13,7 +13,7 @@ dotenv.config();
 
 const rateLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
-  max: 60,
+  max: 5000,
   handler: function (req, res) {
     return res.status(429).json({
       error: "You sent too many requests. Please wait a while then try again",
