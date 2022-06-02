@@ -25,8 +25,6 @@ const addUserDetails = async (username, id) => {
       userDetails: { id: userDetails._id, name: userDetails.username },
     });
 
-    // console.log("successfully created blacklist" + createQuery);
-    // console.log("data added successfully:" + response);
     // return res.json({ status: "ok", response: "Successfully Created" });
   } catch (err) {
     // console.log(err);
@@ -72,33 +70,36 @@ const findPrevToken = async (user) => {
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username }).lean();
-  const token = tokenGenerator.generateAccessToken(user);
+  try {
+    const user = await User.findOne({ username }).lean();
+    const token = tokenGenerator.generateAccessToken(user);
 
-  if (!user) {
-    return res.json({ status: "error", error: "Invalid username/password" });
-  }
-
-  if (await bcrypt.compare(password, user.password)) {
-    // the username, password combination is successful
-
-    const authToken = await findPrevToken(user);
-
-    if (authToken) {
-      deleteTokens(user._id, authToken);
-      insertQuery(user, token, req);
-    } else {
-      insertQuery(user, token, req);
+    if (!user) {
+      return res.json({ status: "error", error: "Invalid username/password" });
     }
 
-    addUserDetails(username, user._id);
+    if (await bcrypt.compare(password, user.password)) {
+      // the username, password combination is successful
 
-    return res.json({
-      status: "ok",
-      token,
-    });
+      const authToken = await findPrevToken(user);
+
+      if (authToken) {
+        deleteTokens(user._id, authToken);
+        insertQuery(user, token, req);
+      } else {
+        insertQuery(user, token, req);
+      }
+
+      addUserDetails(username, user._id);
+
+      return res.json({
+        status: "ok",
+        token,
+      });
+    }
+  } catch (error) {
+    return res.json({ status: "error", error: "Invalid username/password" });
   }
-  res.json({ status: "error", error: "Invalid username/password" });
 });
 
 router.post("/register", async (req, res) => {
@@ -127,7 +128,7 @@ router.post("/register", async (req, res) => {
       ipAddr: networkInterfaces.Ethernet[1].address,
       userAgent: req.headers["user-agent"],
     });
-    console.log("User created successfully: ");
+    // console.log("User created successfully: ");
     return res.json({ status: "ok" });
   } catch (error) {
     if (error.code === 11000) {
@@ -163,7 +164,10 @@ router.get("/verify", async (req, res) => {
 });
 
 router.post("/logout", async (req, res) => {
-  const { id } = jwt.decode(req.body.token);
+  if (req.body.token) {
+    const { id } = jwt.decode(req.body.token);
+  }
+  const id = null;
   const update = await User.findOneAndUpdate(
     {
       _id: mongoose.Types.ObjectId(id),
