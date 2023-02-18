@@ -7,7 +7,6 @@ const UserSchema = new mongoose.Schema(
     authToken: { type: String },
     userAgent: { type: String },
     loggedStatus: { type: Boolean, default: false },
-    ipAddr: { type: String },
   },
   { collection: "users" }
 );

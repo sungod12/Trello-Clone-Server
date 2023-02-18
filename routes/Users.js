@@ -8,7 +8,6 @@ const env = require("dotenv");
 const { TokenGenerator, deleteTokens } = require("../TokenMethods");
 const mongoose = require("mongoose");
 const tokenGenerator = new TokenGenerator();
-const networkInterfaces = require("os").networkInterfaces();
 env.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -50,7 +49,6 @@ const insertQuery = async (user, token, req) => {
     },
     {
       $set: {
-        ipAddr: networkInterfaces.Ethernet[1].address,
         userAgent: req.headers["user-agent"],
         authToken: token,
       },
@@ -126,7 +124,6 @@ router.post("/register", async (req, res) => {
     const response = await User.create({
       username,
       password,
-      ipAddr: networkInterfaces.Ethernet[1].address,
       userAgent: req.headers["user-agent"],
     });
     // console.log("User created successfully: ");
@@ -165,17 +162,18 @@ router.get("/verify", async (req, res) => {
 });
 
 router.post("/logout", async (req, res) => {
+  let id=null;
   if (req.body.token) {
-    const { id } = jwt.decode(req.body.token);
+     const {id:tempId} = jwt.decode(req.body.token);
+     id=tempId;
   }
-  const id = null;
   const update = await User.findOneAndUpdate(
     {
       _id: mongoose.Types.ObjectId(id),
     },
     {
       $set: { loggedStatus: false },
-      $unset: { ipAddr: "", userAgent: "" },
+      $unset: { userAgent: "" },
     }
   );
   res.json({ message: "You logged out successfully" });
