@@ -17,7 +17,9 @@ router.get("/getData/:id", VerifyToken, async (req, res) => {
         BoardData: { $elemMatch: { id: mongoose.Types.ObjectId(boardId) } },
       }
     ).lean();
-    res.json({ items: BoardData[0].board.data, boardId: BoardData[0].id });
+    res
+      .status(200)
+      .json({ items: BoardData[0].board.data, boardId: BoardData[0].id });
   } catch (err) {
     res.json("error fetching");
   }
@@ -131,7 +133,6 @@ router.post("/addCard/:id", VerifyToken, async (req, res) => {
       },
       {
         $arrayFilters: [{ "elem.column": column }],
-        // $project: { "BoardData.$": 1, _id: 0 },
       }
     ).lean();
     console.log(response);

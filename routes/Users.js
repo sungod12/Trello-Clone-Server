@@ -69,6 +69,7 @@ const findPrevToken = async (user) => {
 };
 
 router.post("/login", async (req, res) => {
+  console.log("in login")
   const { username, password } = req.body;
   try {
     const user = await User.findOne({ username }).lean();
