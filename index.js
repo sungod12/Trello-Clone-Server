@@ -24,8 +24,7 @@ const rateLimiter = rateLimit({
 try {
   mongoose.connect(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jwhcr.mongodb.net/test2`
-  );
-  console.log("connected successfully")
+  ).then(()=>console.log("connected successfully")).catch((err)=>{throw err});
 } catch (err) {
   console.log(err)
   console.log("error connecting");
