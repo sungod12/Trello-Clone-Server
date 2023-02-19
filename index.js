@@ -4,7 +4,7 @@ const cors = require("cors");
 const { router: UserRouter } = require("./routes/Users");
 const KanbanRouter = require("./routes/KanbanBoard");
 const rateLimit = require("express-rate-limit");
-app.use(cors);
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 const PORT = 3001;
 const mongoose = require("mongoose");
@@ -21,10 +21,15 @@ const rateLimiter = rateLimit({
   },
 });
 
-mongoose.connect(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jwhcr.mongodb.net/test2`
-).then((val)=>console.log("db connected successfully")).catch((err)=>console.log("error connecting due to "+err));
-
+try {
+  mongoose.connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jwhcr.mongodb.net/test2`
+  );
+  console.log("connected successfully")
+} catch (err) {
+  console.log(err)
+  console.log("error connecting");
+}
 
 app.use(rateLimiter);
 app.use(UserRouter);
