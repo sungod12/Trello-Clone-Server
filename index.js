@@ -21,10 +21,10 @@ const rateLimiter = rateLimit({
   },
 });
 
-const connectDb=async()=>{
-    await mongoose.connect(
+const connectDb=()=>{
+  mongoose.connect(
       `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jwhcr.mongodb.net/test2`
-    );
+    ).then((val)=>console.log("db connected successfully")).catch((err)=>console.log("error connecting due to "+err));
 }
 
 
@@ -32,5 +32,5 @@ app.use(rateLimiter);
 app.use(UserRouter);
 app.use(KanbanRouter);
 app.listen(process.env.PORT || PORT, () => console.log("server is running"));
-connectDb().then(()=>console.log("db connected successfully")).catch((error)=>console.log("error connecting due to "+error));
 app.get("/",(req,res)=>res.json("Trello server initialized"));
+connectDb();
