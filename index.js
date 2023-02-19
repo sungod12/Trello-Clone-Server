@@ -4,7 +4,7 @@ const cors = require("cors");
 const { router: UserRouter } = require("./routes/Users");
 const KanbanRouter = require("./routes/KanbanBoard");
 const rateLimit = require("express-rate-limit");
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors);
 app.use(express.json());
 const PORT = 3001;
 const mongoose = require("mongoose");
@@ -21,16 +21,16 @@ const rateLimiter = rateLimit({
   },
 });
 
-try {
-  mongoose.connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jwhcr.mongodb.net/test2`
-  );
-} catch (err) {
-  console.log("error connecting");
+const connectDb=async()=>{
+    await mongoose.connect(
+      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jwhcr.mongodb.net/test2`
+    );
 }
+
 
 app.use(rateLimiter);
 app.use(UserRouter);
 app.use(KanbanRouter);
 app.listen(process.env.PORT || PORT, () => console.log("server is running"));
+connectDb().then(()=>console.log("db connected successfully")).catch((error)=>console.log("error connecting due to "+error));
 app.get("/",(req,res)=>res.json("Trello server initialized"));
